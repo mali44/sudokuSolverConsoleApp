@@ -1,0 +1,182 @@
+package sdk1;
+
+public class sudoku {
+
+    public static void main(String[] args) {
+        int sayitablosu [][]={
+            {1,5,7,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,3,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,2,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+        };
+       System.out.println("__Kullanıcının girdileri__");
+        Print(sayitablosu);
+        
+         if(Cozum(sayitablosu))
+          {
+           Print(sayitablosu);
+           System.out.println("\n\n___Çözdümm :) !___");
+          }	
+          else{
+             System.out.println("\n\nÇözüm yok\n\n");
+          }
+        
+    }
+    
+    
+    public static void Print(int sayitablosu [][])
+     {System.out.println(" ");
+    for(int i=0;i<9;i++)
+     {
+         System.out.println("");
+         for(int j=0;j<9;j++)
+         {
+             System.out.print(sayitablosu[i][j]+" ") ;
+             
+         }
+         
+     }
+         
+     }
+    public static boolean Cozum(int [][] sayitablosu)
+    {
+     int kontrollerim [][] = new int[sayitablosu.length][sayitablosu[0].length];
+     for(int i=0;i<9;i++)
+     {
+         for(int j=0;j<9;j++)
+         {
+        	 
+             kontrollerim[i][j]=sayitablosu[i][j]>0?2:0;
+             
+         }
+         
+     }
+     return   Cozum(sayitablosu, kontrollerim, 0, 0);
+    }
+    public static boolean Cozum(int [][] sayitablosu,int kontrollerim [][],int x, int y)
+    {
+    	
+    	// 	
+        if(x==9)
+        {
+            int sayar=0;
+            for(int i=0;i<9;i++)
+            {
+                for(int j=0;j<9;j++)
+                {
+                    sayar+=kontrollerim[i][j]>0?1:0;
+                }
+            }
+            if(sayar==81)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+        
+        //Satirdaki kullanıcı girdilerini kontrollerimden bulma fonk.
+        if(kontrollerim[x][y]>=1)
+        {
+            int yeniX=x; 
+            int yeniY=y+1;
+            if(yeniY==9)
+            {
+                yeniX=x+1;  //sona gelince bir alt satıra geçiyorum
+                yeniY=0; 	//alt satıra geçerken y değerimi başa getiriyorum
+            }
+            
+            //rekürsif bir şekilde  yeni satırı başlatıyorum
+           return  Cozum(sayitablosu, kontrollerim, yeniX,yeniY);
+        }   
+        else 
+        {
+        	//burada satır sütun ve 3*3 karede olan sayıları ku
+            boolean [] kullanilmissayilaribul= new boolean[9];
+            
+            
+            //satır kontrol
+            
+            for(int i=0;i<9;i++)
+            {
+                if(kontrollerim[x][i]>=1)
+                    kullanilmissayilaribul[sayitablosu[x][i]-1]=true;
+            }
+            
+            //sütun kontrol
+             for(int i=0;i<9;i++)
+            {
+                if(kontrollerim[i][y]>=1)
+                    kullanilmissayilaribul[sayitablosu[i][y]-1]=true;
+            }
+             
+             //içe içe  geçmiş 3*3 'lük dizilerde yakın degerler kontrolü
+             // satırlar 0,3,6 dan başlar, sütunlarda aynı şekkilde
+             
+             for(int i =x-(x%3);i<x-(x%3)+3;i++)
+             
+                 for(int j =y-(y%3);j<y-(y%3)+3;j++)
+                 {
+                         if(kontrollerim[i][j]>=1)
+                     
+                         kullanilmissayilaribul[sayitablosu[i][j]-1]=true;
+                     
+                 }
+             
+             for(int i=0; i<kullanilmissayilaribul.length;i++)
+             {
+                 if(!kullanilmissayilaribul[i])
+                 {
+                     kontrollerim[x][y]=1;  // buraya atadığımız değer için kontrolü 1 ile belirtiyoruz
+                     sayitablosu[x][y]=i+1;
+                int yeniX=x;
+                int yeniY=y+1;
+                
+                
+                //olaki indexin dışına çıkıyorsak bu kontrolü yapmamız bir alt satıra gitmemizi sağlar
+                if(yeniY==9)
+                { 
+                yeniX=x+1;
+                yeniY=0;
+                }
+                
+                //kendine kendine kontrol döndürme parametresi
+                //böylece bir sonraki adıma geçebilelim
+                if(Cozum(sayitablosu,kontrollerim,yeniX,yeniY)) {
+                    return true;
+                }
+                
+                
+                //HATALI ATADIĞIMIZ DEĞİŞKENLERİ BULUP YERLERİNE SIFIR ATAMAK
+                // KONTROLÜME DE SIFIR ATIYORUM
+                
+                //??
+                
+                for(int m=0;m<9;m++)
+                
+                    for(int n=0;n<9;n++)
+                    {
+                        if(m>x || (m==x && n>=y) )
+                        {
+                            if(kontrollerim[m][n]==1)
+                            {
+                                kontrollerim[m][n]=0;
+                                sayitablosu[m][n]=0;
+                            }
+                        }
+                    }
+                
+            
+                }
+             }
+             
+            }
+        return false;
+    }
+    
+}
